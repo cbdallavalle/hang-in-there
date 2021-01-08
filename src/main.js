@@ -1,4 +1,11 @@
 // query selector variables go here 👇
+const posterImg = document.querySelector('.poster-img')
+const posterTitle = document.querySelector('.poster-title')
+const posterQuote = document.querySelector('.poster-quote')
+const showFormButton = document.querySelector('.show-form')
+const showSavedPostersButton = document.querySelector('.show-saved')
+const showMainButton = document.querySelector('.show-main')
+const backToMainButton = document.querySelector('.back-to-main')
 
 // we've provided you with some data to work with 👇
 var images = [
@@ -102,6 +109,18 @@ var savedPosters = [];
 var currentPoster;
 
 // event listeners go here 👇
+window.onload = getRandomPoster
+document.querySelector('.show-random').addEventListener('click', getRandomPoster)
+showFormButton.addEventListener('click', handlePageNavigation)
+showSavedPostersButton.addEventListener('click', (event) => {
+  handlePageNavigation(event)
+  showPosters()
+})
+showMainButton.addEventListener('click', () => {handlePageNavigation})
+backToMainButton.addEventListener('click', handlePageNavigation)
+document.querySelector('form').addEventListener('submit', createNewForm)
+document.querySelector('.save-poster').addEventListener('click', savePoster)
+document.querySelector('.saved-posters-grid').addEventListener('dblclick', deletePoster)
 
 // functions and event handlers go here 👇
 // (we've provided one for you to get you started)!
@@ -109,3 +128,71 @@ function getRandomIndex(array) {
   return Math.floor(Math.random() * array.length);
 }
 
+function getRandomPoster() {
+  var newImage = images[getRandomIndex(images)]
+  var newTitle = titles[getRandomIndex(titles)]
+  var newQuote = quotes[getRandomIndex(quotes)]
+  currentPoster = new Poster(newImage, newTitle, newQuote)
+  setPosterValues()
+}
+
+function setPosterValues() {
+  posterImg.src = currentPoster.imageURL
+  posterTitle.innerText = currentPoster.title
+  posterQuote.innerText = currentPoster.quote
+}
+
+function handlePageNavigation(event) {
+  document.querySelector('.main-poster').classList.add('hidden')
+  document.querySelector('.poster-form').classList.add('hidden')
+  document.querySelector('.saved-posters').classList.add('hidden')
+  document.querySelector(`.${event.target.getAttribute('data-section-id')}`).classList.remove('hidden')
+}
+
+function createNewForm(event) {
+  event.preventDefault()
+  var imageSrc = document.querySelector('#poster-image-url').value
+  var title =  document.querySelector('#poster-title').value
+  var quote =  document.querySelector('#poster-quote').value
+  images.push(imageSrc)
+  titles.push(title)
+  quotes.push(quote)
+  currentPoster = new Poster(imageSrc, title, quote)
+  document.querySelector('.poster-form').classList.add('hidden')
+  document.querySelector('.main-poster').classList.remove('hidden')
+  setPosterValues()
+}
+
+function savePoster() {
+  var duplicate = savedPosters.find(poster => {
+    if (
+      poster.imageSrc === currentPoster.imageSrc &&
+      poster.title === currentPoster.title &&
+      poster.quote === currentPoster.quote
+    ) {
+      return poster
+    }
+  })
+  if (duplicate) return
+  savedPosters.push(currentPoster)
+}
+
+function showPosters() {
+  const postersHtml = savedPosters.map(poster => {
+    return `
+    <article class="mini-poster" data-id=${poster.id}>
+      <img src=${poster.imageURL} />
+      <h2>${poster.title}</h2>
+      <h4>${poster.quote}</h4>
+    </article>
+    `
+  })
+  document.querySelector('.saved-posters-grid').innerHTML = postersHtml.join('')
+}
+
+function deletePoster(event) {
+  var closestElement = event.target.closest('.mini-poster')
+
+  savedPosters = savedPosters.filter(poster => poster.id !== parseInt(closestElement.getAttribute('data-id')))
+  showPosters()
+}
