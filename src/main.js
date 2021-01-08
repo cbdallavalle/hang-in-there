@@ -1,11 +1,4 @@
 // query selector variables go here 👇
-const posterImg = document.querySelector('.poster-img')
-const posterTitle = document.querySelector('.poster-title')
-const posterQuote = document.querySelector('.poster-quote')
-const showFormButton = document.querySelector('.show-form')
-const showSavedPostersButton = document.querySelector('.show-saved')
-const showMainButton = document.querySelector('.show-main')
-const backToMainButton = document.querySelector('.back-to-main')
 
 // we've provided you with some data to work with 👇
 var images = [
@@ -111,13 +104,13 @@ var currentPoster;
 // event listeners go here 👇
 window.onload = getRandomPoster
 document.querySelector('.show-random').addEventListener('click', getRandomPoster)
-showFormButton.addEventListener('click', handlePageNavigation)
-showSavedPostersButton.addEventListener('click', (event) => {
+document.querySelector('.show-form').addEventListener('click', handlePageNavigation)
+document.querySelector('.show-main').addEventListener('click', handlePageNavigation)
+document.querySelector('.back-to-main').addEventListener('click', handlePageNavigation)
+document.querySelector('.show-saved').addEventListener('click', (event) => {
   handlePageNavigation(event)
   showPosters()
 })
-showMainButton.addEventListener('click', () => {handlePageNavigation})
-backToMainButton.addEventListener('click', handlePageNavigation)
 document.querySelector('form').addEventListener('submit', createNewForm)
 document.querySelector('.save-poster').addEventListener('click', savePoster)
 document.querySelector('.saved-posters-grid').addEventListener('dblclick', deletePoster)
@@ -137,9 +130,9 @@ function getRandomPoster() {
 }
 
 function setPosterValues() {
-  posterImg.src = currentPoster.imageURL
-  posterTitle.innerText = currentPoster.title
-  posterQuote.innerText = currentPoster.quote
+  document.querySelector('.poster-img').src = currentPoster.imageURL
+  document.querySelector('.poster-title').innerText = currentPoster.title
+  document.querySelector('.poster-quote').innerText = currentPoster.quote
 }
 
 function handlePageNavigation(event) {
